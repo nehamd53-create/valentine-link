@@ -7,7 +7,7 @@
   <title>Hey Nithin 💖</title>
 
   <style>
-    * { box-sizing: border-box; }
+    *{ box-sizing:border-box; }
 
     body{
       margin:0;
@@ -90,9 +90,8 @@
       box-shadow: 0 14px 26px rgba(0,0,0,0.12);
     }
 
-    /* Floating hearts */
     .heart{
-      position: absolute;
+      position: fixed;
       bottom: -30px;
       font-size: 18px;
       opacity: 0.9;
@@ -114,14 +113,13 @@
     <p>Just say yes… it’ll be cute 😳🌸</p>
 
     <div class="btns" id="buttons">
-      <button id="yesBtn">Yes 💘</button>
-      <button id="noBtn">No 🙈</button>
+      <button id="yesBtn" type="button">Yes 💘</button>
+      <button id="noBtn" type="button">No 🙈</button>
     </div>
 
     <div class="result" id="result">
       <h2 style="color:#c2185b; margin: 12px 0 10px;">Yayyy!! 😍</h2>
 
-      <!-- Soft pastel anime couple GIF (Option 3) -->
       <img
         class="gif"
         alt="Soft pastel anime couple"
@@ -133,52 +131,70 @@
   </div>
 
   <script>
-    const yesBtn = document.getElementById("yesBtn");
-    const noBtn  = document.getElementById("noBtn");
-    const result = document.getElementById("result");
-    const buttons = document.getElementById("buttons");
+    // Make sure JS runs AFTER page loads
+    window.addEventListener("load", () => {
+      const yesBtn = document.getElementById("yesBtn");
+      const noBtn  = document.getElementById("noBtn");
+      const result = document.getElementById("result");
+      const buttons = document.getElementById("buttons");
 
-    // YES button behavior
-    yesBtn.addEventListener("click", () => {
-      buttons.style.display = "none";
-      result.style.display = "block";
-      startHearts();
+      // Safety check: if IDs missing, stop (prevents silent failure)
+      if (!yesBtn || !noBtn || !result || !buttons) {
+        alert("Buttons not found. Please paste full code again.");
+        return;
+      }
+
+      // YES => show GIF + hearts
+      yesBtn.addEventListener("click", () => {
+        buttons.style.display = "none";
+        result.style.display = "block";
+        startHearts();
+      });
+
+      // NO => run away (mouse + mobile)
+      noBtn.addEventListener("mouseenter", moveNoButton);
+      noBtn.addEventListener("mouseover", moveNoButton);
+      noBtn.addEventListener("pointerenter", moveNoButton);
+      noBtn.addEventListener("touchstart", moveNoButton, { passive: true });
+
+      // Also: if they somehow try to click, move immediately
+      noBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        moveNoButton();
+      });
+
+      function moveNoButton(){
+        const padding = 20;
+        const btnW = noBtn.offsetWidth || 110;
+        const btnH = noBtn.offsetHeight || 45;
+
+        const maxX = Math.max(0, window.innerWidth - btnW - padding);
+        const maxY = Math.max(0, window.innerHeight - btnH - padding);
+
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+
+        noBtn.style.position = "fixed";
+        noBtn.style.left = ${x}px;
+        noBtn.style.top  = ${y}px;
+        noBtn.style.zIndex = "9999";
+      }
+
+      function startHearts(){
+        const emojis = ["💗","💖","💕","💞","💘"];
+        const interval = setInterval(() => {
+          const heart = document.createElement("div");
+          heart.className = "heart";
+          heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          heart.style.left = Math.floor(Math.random() * 100) + "vw";
+          heart.style.fontSize = (16 + Math.random()*18) + "px";
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 4200);
+        }, 240);
+
+        setTimeout(() => clearInterval(interval), 8000);
+      }
     });
-
-    // NO button runs away
-    noBtn.addEventListener("mouseover", moveNoButton);
-    noBtn.addEventListener("touchstart", moveNoButton);
-
-    function moveNoButton() {
-      const padding = 20;
-      const btnW = noBtn.offsetWidth;
-      const btnH = noBtn.offsetHeight;
-
-      const maxX = window.innerWidth - btnW - padding;
-      const maxY = window.innerHeight - btnH - padding;
-
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
-
-      noBtn.style.position = "fixed";
-      noBtn.style.left = ${x}px;
-      noBtn.style.top  = ${y}px;
-    }
-
-    function startHearts(){
-      const emojis = ["💗","💖","💕","💞","💘"];
-      const interval = setInterval(() => {
-        const heart = document.createElement("div");
-        heart.className = "heart";
-        heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        heart.style.left = Math.floor(Math.random() * 100) + "vw";
-        heart.style.fontSize = (16 + Math.random()*18) + "px";
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 4200);
-      }, 240);
-
-      setTimeout(() => clearInterval(interval), 8000);
-    }
   </script>
 </body>
 </html>
