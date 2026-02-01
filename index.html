@@ -1,0 +1,142 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Will you be my Valentine?</title>
+  <style>
+    :root { --card-w: min(520px, 92vw); }
+    body{
+      margin:0; height:100vh; display:grid; place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: linear-gradient(135deg,#ffe7f1,#fff6e7);
+    }
+    .card{
+      width: var(--card-w);
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
+      padding: 26px 22px 22px;
+      text-align:center;
+      position: relative;
+      overflow: hidden;
+    }
+    .emoji{
+      font-size: 48px;
+      margin-bottom: 6px;
+    }
+    h1{
+      margin: 8px 0 18px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+    .btnRow{
+      position: relative;
+      height: 90px; /* space for the moving button */
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap: 16px;
+    }
+    button{
+      border:0;
+      padding: 12px 22px;
+      font-size: 16px;
+      border-radius: 999px;
+      cursor:pointer;
+      transition: transform .15s ease, box-shadow .15s ease, left .18s ease, top .18s ease;
+      box-shadow: 0 10px 18px rgba(0,0,0,.08);
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #yes{
+      background: #ff4d8d;
+      color: white;
+    }
+    #yes:active{ transform: scale(.98); }
+    #no{
+      background: #f2f2f2;
+      color: #222;
+      position: absolute; /* so it can run away */
+      left: 60%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+    }
+    .hint{
+      margin-top: 14px;
+      font-size: 13px;
+      color: rgba(0,0,0,.55);
+    }
+    .toast{
+      margin-top: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+      display:none;
+    }
+    .show { display:block; }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="emoji">🐣💘</div>
+    <h1 id="q">Will you be my Valentine?</h1>
+
+    <div class="btnRow" id="arena">
+      <button id="yes">Yes</button>
+      <button id="no">No</button>
+    </div>
+
+    <div class="hint" id="hint">“No” seems a bit shy 😏</div>
+    <div class="toast" id="toast">YAY! 💖 See you on Valentine’s 😌</div>
+  </div>
+
+<script>
+  // Optional: personalize via URL ?name=Nirali
+  const params = new URLSearchParams(location.search);
+  const name = params.get("name");
+  if (name) document.getElementById("q").textContent = ${name}, will you be my Valentine?;
+
+  const noBtn = document.getElementById("no");
+  const yesBtn = document.getElementById("yes");
+  const arena = document.getElementById("arena");
+  const toast = document.getElementById("toast");
+  const hint = document.getElementById("hint");
+
+  function moveNoButton() {
+    const pad = 8;
+    const a = arena.getBoundingClientRect();
+    const b = noBtn.getBoundingClientRect();
+
+    // max positions inside the arena
+    const maxX = a.width - b.width - pad;
+    const maxY = a.height - b.height - pad;
+
+    // random position
+    const x = Math.max(pad, Math.random() * maxX);
+    const y = Math.max(pad, Math.random() * maxY);
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+    noBtn.style.transform = "translate(0,0)";
+  }
+
+  // Make "No" run away on hover (desktop) and on touch (mobile)
+  noBtn.addEventListener("mouseenter", moveNoButton);
+  noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); }, {passive:false});
+  noBtn.addEventListener("click", (e) => { e.preventDefault(); moveNoButton(); });
+
+  yesBtn.addEventListener("click", () => {
+    toast.classList.add("show");
+    hint.textContent = "Best decision ever 😌💗";
+    // Optional: you can redirect after yes
+    // setTimeout(() => location.href = "https://example.com", 1200);
+  });
+
+  // Start with a slightly random No position
+  moveNoButton();
+</script>
+</body>
+</html>
